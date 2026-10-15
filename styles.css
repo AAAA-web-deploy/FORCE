@@ -199,47 +199,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   margin-top: 20px;
 }
 
-.watch {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 16px;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  min-height: 44px;
-}
-
-.watch-icon,
-.circle-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1.5px solid var(--line);
-  display: grid;
-  place-items: center;
-  color: var(--ink);
-  background: transparent;
-  flex: 0 0 auto;
-}
-
-.watch-icon svg,
-.circle-btn svg { width: 15px; height: 15px; display: block; }
-
-.circle-btn svg[hidden] { display: none !important; }
-
-.circle-btn {
-  padding: 0;
-  cursor: pointer;
-}
-
-.circle-btn .icon-play { margin-left: 2px; }
-.watch-icon svg { margin-left: 2px; }
-
 .coin {
   position: absolute;
   top: -54px;
@@ -271,33 +230,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 .coin-video.is-ready { opacity: 1; }
-
-.coin-caption {
-  position: absolute;
-  left: 22%;
-  bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0;
-}
-
-.coin-name,
-.coin-note { margin: 0; }
-
-.coin-name {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-}
-
-.coin-note {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.3;
-}
 
 .token-grid {
   display: grid;
@@ -553,12 +485,6 @@ body.film-open { overflow: hidden; }
     right: auto;
     width: min(440px, 88%);
     margin: 12px auto 0;
-  }
-
-  .coin-caption {
-    position: static;
-    width: auto;
-    margin: 2px 0 0 10%;
   }
 
   .token-grid { grid-template-columns: 1fr 1fr; }

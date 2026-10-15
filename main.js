@@ -1,6 +1,5 @@
 (function () {
   const coinVideo = document.getElementById("coin-video");
-  const coinToggle = document.getElementById("coin-toggle");
   const overlay = document.getElementById("film-overlay");
   const dialog = overlay.querySelector(".film-dialog");
   const playerSlot = document.getElementById("film-player");
@@ -59,12 +58,8 @@
       if (poster) poster.src = film.poster;
     }
 
-    const watch = document.querySelector(".watch-label");
-    if (watch && film.seconds) watch.textContent = "Watch film · " + clock(film.seconds, false);
     const filmTime = document.querySelector(".film-time");
     if (filmTime && film.seconds) filmTime.textContent = clock(film.seconds, true);
-    const coinNote = document.querySelector(".coin-note");
-    if (coinNote && coin.seconds) coinNote.textContent = coin.seconds + "s loop · muted";
 
     if (typeof next.footer === "string" && next.footer.trim()) {
       document.getElementById("footer-note").textContent = next.footer;
@@ -134,14 +129,6 @@
     coinVideo.src = src;
   }
 
-  function syncCoinButton() {
-    const playing = !coinVideo.paused && !coinVideo.ended;
-    coinToggle.setAttribute("aria-pressed", playing ? "true" : "false");
-    coinToggle.setAttribute("aria-label", playing ? "Pause founding coin" : "Play founding coin");
-    coinToggle.querySelector(".icon-play").hidden = playing;
-    coinToggle.querySelector(".icon-pause").hidden = !playing;
-  }
-
   function playCoin() {
     attachCoin();
     const attempt = coinVideo.play();
@@ -150,7 +137,6 @@
         coinVideo.classList.add("is-ready");
       }).catch(function () {
         coinVideo.classList.remove("is-ready");
-        syncCoinButton();
       });
     }
   }
@@ -180,18 +166,6 @@
 
   coinVideo.addEventListener("play", function () {
     coinVideo.classList.add("is-ready");
-    syncCoinButton();
-  });
-  coinVideo.addEventListener("pause", syncCoinButton);
-  coinToggle.addEventListener("click", function () {
-    if (!coinVideo.paused && !coinVideo.ended) {
-      coinUserPaused = true;
-      pauseCoin();
-      return;
-    }
-    coinUserPaused = false;
-    coinArmed = true;
-    playCoin();
   });
 
   document.addEventListener("visibilitychange", refreshCoin);

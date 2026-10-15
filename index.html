@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Musk Gravity</title>
+  <meta name="description" content="The force that moves the river. An independent Ethereum community token, inspired by Elon Musk.">
+  <meta name="theme-color" content="#F7F7F4">
+  <link rel="icon" href="assets/brand/favicon.png" type="image/png">
+  <meta property="og:title" content="Musk Gravity">
+  <meta property="og:description" content="The force that moves the river. An independent Ethereum community token, inspired by Elon Musk.">
+  <meta property="og:image" content="assets/brand/musk-gravity-banner.png">
+  <link rel="preload" as="image" href="assets/images/coin-poster.webp" fetchpriority="high">
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+</head>
+<body id="top">
+  <div id="page">
+    <header class="site-header">
+      <div class="frame bar">
+        <a class="brand" href="#top">
+          <img src="assets/brand/musk-gravity-logo.webp" alt="" width="256" height="256">
+          <span>MUSK GRAVITY</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+        <nav class="site-nav" id="site-nav" aria-label="Primary">
+          <a href="#film">Film</a>
+          <a href="#token">Token</a>
+          <a href="#resources">Community</a>
+          <a class="btn btn-outline" href="#token">Explore $FORCE <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 11.8 11.8 4.2M6.2 4.2h5.6v5.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="frame hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">$FORCE / ETHEREUM</p>
+            <h1 id="hero-title">Musk<br>Gravity.</h1>
+            <p class="slogan">The force that moves the river.</p>
+            <p class="lede"><span>An independent Ethereum community token,</span><span>inspired by Elon Musk.</span></p>
+            <div class="actions">
+              <a class="btn btn-fill" href="#token">Explore $FORCE <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 11.8 11.8 4.2M6.2 4.2h5.6v5.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <button class="watch" type="button" data-open-film>
+                <span class="watch-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M9.2 7.4v9.2l7.6-4.6-7.6-4.6z" fill="currentColor"/></svg>
+                </span>
+                <span class="watch-label">Watch film · 0:22</span>
+              </button>
+            </div>
+          </div>
+
+          <figure class="coin">
+            <div class="coin-media">
+              <img class="coin-poster" src="assets/images/coin-poster.webp" alt="Musk Gravity founding coin with the approved portrait face" width="720" height="720" fetchpriority="high" decoding="async">
+              <video
+                id="coin-video"
+                class="coin-video"
+                width="1080"
+                height="1080"
+                muted
+                loop
+                playsinline
+                preload="none"
+                data-src="assets/videos/coin-loop.mp4"
+                aria-hidden="true"
+              ></video>
+            </div>
+            <div class="coin-caption">
+              <button class="circle-btn" id="coin-toggle" type="button" aria-pressed="false" aria-label="Play founding coin">
+                <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 7.4v9.2l7.6-4.6-7.6-4.6z" fill="currentColor"/></svg>
+                <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M8 6.2h2.6v11.6H8zM13.4 6.2H16v11.6h-2.6z" fill="currentColor"/></svg>
+              </button>
+              <div>
+                <p class="coin-name">Founding Edition</p>
+                <p class="coin-note">18s loop · muted</p>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section class="token" id="token" aria-label="Token">
+        <div class="frame token-grid">
+          <div class="token-col">
+            <p class="kicker">Token</p>
+            <p class="value">$FORCE</p>
+          </div>
+          <div class="token-col">
+            <p class="kicker">Network</p>
+            <p class="value">Ethereum</p>
+          </div>
+          <div class="token-col">
+            <p class="kicker">Contract</p>
+            <div class="value" id="contract-value">To be announced</div>
+          </div>
+          <div class="token-col" id="resources">
+            <p class="kicker">Resources</p>
+            <p class="resource-row">
+              <span class="resource is-pending" data-pending="chat" role="link" aria-disabled="true" aria-label="Chat, to be announced">Chat <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 11.8 11.8 4.2M6.2 4.2h5.6v5.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="resource is-pending" data-pending="explorer" role="link" aria-disabled="true" aria-label="Explorer, to be announced">Explorer <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 11.8 11.8 4.2M6.2 4.2h5.6v5.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="film" id="film" aria-labelledby="film-title">
+        <div class="frame film-inner">
+          <p class="kicker film-kicker">Founding film</p>
+          <div class="film-head">
+            <h2 id="film-title">The beginning.</h2>
+            <p class="film-time">00:22</p>
+          </div>
+          <button class="poster" type="button" data-open-film aria-label="Play founding film">
+            <img src="assets/images/film-poster.webp" alt="" width="1460" height="400" loading="lazy" decoding="async">
+            <span class="poster-play" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9.4 7.2v9.6l8-4.8-8-4.8z" fill="currentColor"/></svg>
+            </span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="frame bar footer-bar">
+        <a class="brand brand-footer" href="#top">
+          <img src="assets/brand/musk-gravity-logo.webp" alt="" width="256" height="256">
+          <span>MUSK GRAVITY</span>
+        </a>
+        <p class="footer-note" id="footer-note">Independent community project. No affiliation with Elon Musk or his companies.</p>
+      </div>
+    </footer>
+  </div>
+
+  <div class="film-overlay" id="film-overlay" hidden>
+    <div class="film-dialog" role="dialog" aria-modal="true" aria-label="Founding film">
+      <button class="film-close" type="button" aria-label="Close film">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.4 3.4 12.6 12.6M12.6 3.4 3.4 12.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <div class="film-player" id="film-player"></div>
+    </div>
+  </div>
+</body>
+</html>

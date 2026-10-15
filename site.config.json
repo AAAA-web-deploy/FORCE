@@ -1,0 +1,57 @@
+{
+  "brand": {
+    "name": "Musk Gravity",
+    "wordmark": "MUSK GRAVITY",
+    "ticker": "$FORCE",
+    "videoTicker": "FORCE",
+    "tagline": "The force that moves the river.",
+    "network": "Ethereum"
+  },
+  "hero": {
+    "eyebrow": "$FORCE / ETHEREUM",
+    "headline": [
+      "Musk",
+      "Gravity."
+    ],
+    "description": [
+      "An independent Ethereum community token,",
+      "inspired by Elon Musk."
+    ],
+    "primaryAction": "Explore $FORCE",
+    "filmAction": "Watch film · 0:22"
+  },
+  "token": {
+    "contractAddress": null,
+    "pendingContractLabel": "To be announced"
+  },
+  "links": {
+    "chat": null,
+    "explorer": null
+  },
+  "media": {
+    "logo": "assets/brand/musk-gravity-logo.webp",
+    "logoOriginal": "assets/brand/musk-gravity-logo.png",
+    "favicon": "assets/brand/favicon.png",
+    "socialBanner": "assets/brand/musk-gravity-banner.png",
+    "coin": {
+      "src": "assets/videos/coin-loop.mp4",
+      "poster": "assets/images/coin-poster.webp",
+      "seconds": 18,
+      "width": 1080,
+      "height": 1080,
+      "muted": true,
+      "loop": true
+    },
+    "film": {
+      "src": "assets/videos/founding-film.mp4",
+      "poster": "assets/images/film-poster.webp",
+      "seconds": 22,
+      "width": 1920,
+      "height": 1080,
+      "thumbnailWidth": 1460,
+      "thumbnailHeight": 400
+    }
+  },
+  "reference": "reference/preview.png",
+  "footer": "Independent community project. No affiliation with Elon Musk or his companies."
+}

@@ -272,6 +272,28 @@ button, a { -webkit-tap-highlight-color: transparent; }
   line-height: 1.2;
 }
 
+.fact-window {
+  height: 58px;
+  overflow: hidden;
+}
+
+.fact {
+  height: 58px;
+}
+
+.fact-track {
+  animation: fact-reel 12.5s infinite;
+}
+
+@keyframes fact-reel {
+  0%, 14% { transform: translateY(0); }
+  20%, 34% { transform: translateY(-58px); }
+  40%, 54% { transform: translateY(-116px); }
+  60%, 74% { transform: translateY(-174px); }
+  80%, 94% { transform: translateY(-232px); }
+  100% { transform: translateY(-290px); }
+}
+
 .value-contract {
   display: flex;
   align-items: flex-start;
@@ -551,4 +573,10 @@ body.film-open { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+
+  .fact-window { height: auto; overflow: visible; }
+  .fact-track { animation: none; }
+  .fact-track .fact[aria-hidden="true"] { display: none; }
+  .fact { height: auto; }
+  .fact + .fact { margin-top: 16px; }
 }

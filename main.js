@@ -69,9 +69,9 @@
       contractNode.className = "value value-contract";
       contractNode.textContent = contractAddress;
     } else if (next.token && next.token.pendingContractLabel) {
-      contractAddress = "";
+      contractAddress = String(next.token.pendingContractLabel).trim();
       contractNode.className = "value";
-      contractNode.textContent = next.token.pendingContractLabel;
+      contractNode.textContent = contractAddress;
     }
 
     const links = next.links || {};
@@ -100,7 +100,7 @@
   }
 
   function writeAddress(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText) {
       return navigator.clipboard.writeText(text).catch(function () {
         return writeAddressFallback(text);
       });
@@ -115,11 +115,30 @@
       area.setAttribute("readonly", "");
       area.style.position = "fixed";
       area.style.top = "0";
-      area.style.left = "-9999px";
+      area.style.left = "0";
+      area.style.width = "1px";
+      area.style.height = "1px";
+      area.style.padding = "0";
+      area.style.border = "0";
+      area.style.opacity = "0";
+      area.style.fontSize = "16px";
       document.body.appendChild(area);
+      const selection = document.getSelection();
+      const previous = selection && selection.rangeCount ? selection.getRangeAt(0) : null;
+      area.focus();
       area.select();
-      const ok = document.execCommand("copy");
+      area.setSelectionRange(0, text.length);
+      let ok = false;
+      try {
+        ok = document.execCommand("copy");
+      } catch (error) {
+        ok = false;
+      }
       area.remove();
+      if (previous && selection) {
+        selection.removeAllRanges();
+        selection.addRange(previous);
+      }
       ok ? resolve() : reject(new Error("copy failed"));
     });
   }

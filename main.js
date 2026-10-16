@@ -21,6 +21,7 @@
   let coinUserPaused = false;
   let coinArmed = false;
   let filmOpen = false;
+  let storyOpen = false;
   let coinObserver = null;
 
   function safeHttpUrl(value) {
@@ -154,7 +155,7 @@
   }
 
   function coinShouldPlay() {
-    return coinArmed && coinVisible && !coinUserPaused && !filmOpen && !document.hidden;
+    return coinArmed && coinVisible && !coinUserPaused && !filmOpen && !storyOpen && !document.hidden;
   }
 
   function attachCoin() {
@@ -264,6 +265,67 @@
     closeButton.focus();
   });
 
+  const storyOverlay = document.getElementById("story-overlay");
+  const storyWindow = storyOverlay.querySelector(".story-window");
+  const storyClose = storyOverlay.querySelector(".story-close");
+  let storyFocus = null;
+
+  function storyFocusables() {
+    return Array.prototype.filter.call(
+      storyWindow.querySelectorAll("a[href], button:not([disabled])"),
+      function (el) { return !el.hasAttribute("hidden"); }
+    );
+  }
+
+  function openStory() {
+    storyOpen = true;
+    pauseCoin();
+    setMenu(false);
+    storyFocus = document.activeElement;
+    storyOverlay.hidden = false;
+    page.inert = true;
+    document.body.classList.add("story-open");
+    storyOverlay.querySelector(".story-scroll").scrollTop = 0;
+    storyClose.focus();
+  }
+
+  function closeStory() {
+    storyOpen = false;
+    storyOverlay.hidden = true;
+    if (!filmOpen) page.inert = false;
+    document.body.classList.remove("story-open");
+    if (storyFocus && storyFocus.focus) storyFocus.focus();
+    refreshCoin();
+  }
+
+  document.querySelectorAll("[data-open-story]").forEach(function (control) {
+    control.addEventListener("click", openStory);
+  });
+  storyClose.addEventListener("click", closeStory);
+  storyOverlay.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeStory();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const items = storyFocusables();
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+  document.addEventListener("focusin", function (event) {
+    if (!storyOpen || storyOverlay.contains(event.target)) return;
+    storyClose.focus();
+  });
+
   function setMenu(open) {
     nav.classList.toggle("is-open", open);
     navToggle.setAttribute("aria-expanded", open ? "true" : "false");
@@ -274,7 +336,7 @@
     setMenu(navToggle.getAttribute("aria-expanded") !== "true");
   });
   nav.addEventListener("click", function (event) {
-    if (event.target.closest("a")) setMenu(false);
+    if (event.target.closest("a, button")) setMenu(false);
   });
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && nav.classList.contains("is-open")) {

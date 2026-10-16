@@ -104,10 +104,19 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .header-social { margin-left: 28px; }
 
-.site-nav a {
+.site-nav a,
+.site-nav .nav-link {
   color: var(--ink);
   text-decoration: none;
   font-size: 15px;
+}
+
+.site-nav .nav-link {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  padding: 0;
+  cursor: pointer;
 }
 
 .btn {
@@ -489,6 +498,104 @@ button, a { -webkit-tap-highlight-color: transparent; }
   letter-spacing: 0.16em;
 }
 
+.story-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--bg);
+}
+
+.story-overlay[hidden] { display: none; }
+
+.story-window {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-bar {
+  position: relative;
+  justify-content: flex-start;
+  min-height: 96px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+}
+
+.story-close {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  min-height: 44px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.story-token {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+.story-bar .social-row { margin-left: auto; }
+
+.story-scroll {
+  flex: 1;
+  overflow: auto;
+}
+
+.story-body {
+  padding: 52px max(22px, var(--inset)) 72px;
+}
+
+.story-body h2 {
+  margin: 0;
+  max-width: 16em;
+  font-size: clamp(36px, 4.4vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+
+.story-body blockquote {
+  margin: 28px 0 0;
+  max-width: 18em;
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.story-body p {
+  margin: 20px 0 0;
+  max-width: 40em;
+  font-size: 18px;
+  letter-spacing: -0.011em;
+  line-height: 1.55;
+}
+
+.story-body .story-slogan {
+  margin-top: 32px;
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  line-height: 1.2;
+}
+
+.story-body .story-note {
+  max-width: 36em;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .film-overlay {
   position: fixed;
   inset: 0;
@@ -539,7 +646,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .film-close svg { width: 16px; height: 16px; display: block; }
 
-body.film-open { overflow: hidden; }
+body.film-open,
+body.story-open { overflow: hidden; }
 
 @media (max-width: 900px) {
   .hero-grid {
@@ -586,11 +694,16 @@ body.film-open { overflow: hidden; }
 
   .site-nav.is-open { display: flex; }
 
-  .site-nav a {
+  .site-nav a,
+  .site-nav .nav-link {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
   }
+
+  .story-token { font-size: 28px; }
+
+  .story-body { padding-top: 36px; padding-bottom: 48px; }
 
   .site-nav .social-btn {
     min-height: 42px;

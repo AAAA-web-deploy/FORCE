@@ -646,47 +646,107 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 .story-body {
-  padding: 52px max(22px, var(--inset)) 72px;
+  padding: 36px max(22px, var(--inset)) 64px;
 }
 
-.story-body h2 {
-  margin: 0;
-  max-width: 16em;
-  font-size: clamp(36px, 4.4vw, 56px);
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  line-height: 1.02;
+.story-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: 28px 22px;
+  align-items: start;
 }
 
-.story-body blockquote {
-  margin: 28px 0 0;
-  max-width: 18em;
-  font-size: clamp(24px, 2.6vw, 34px);
+.story-title-block {
+  grid-column: 1;
+  grid-row: 1;
+  background: #171c38;
+  color: #f6f3ec;
+  padding: 36px 36px 40px;
+}
+
+.story-kicker {
+  margin: 0 0 18px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1.25;
-}
-
-.story-body p {
-  margin: 20px 0 0;
-  max-width: 40em;
-  font-size: 18px;
-  letter-spacing: -0.011em;
-  line-height: 1.55;
-}
-
-.story-body .story-slogan {
-  margin-top: 32px;
-  font-size: clamp(24px, 2.4vw, 32px);
-  font-weight: 500;
-  letter-spacing: -0.028em;
+  letter-spacing: 0.34em;
   line-height: 1.2;
+  text-transform: uppercase;
 }
 
-.story-body .story-note {
+.story-title-block h2 {
+  margin: 0;
+  max-width: 11em;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: clamp(40px, 4.4vw, 68px);
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: #f6f3ec;
+}
+
+.story-title-block blockquote {
+  margin: 26px 0 0;
+  max-width: 16em;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: clamp(20px, 2vw, 28px);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  color: #f6f3ec;
+}
+
+.story-photos {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.story-photos img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.story-prose {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.story-prose p {
+  margin: 0 0 16px;
+  max-width: 38em;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: 17px;
+  letter-spacing: 0.005em;
+  line-height: 1.6;
+  color: #243044;
+}
+
+.story-prose .story-slogan {
+  margin: 28px 0 18px;
+  max-width: none;
+  padding: 28px 32px;
+  background: #171c38;
+  color: #f6f3ec;
+  font-size: clamp(22px, 2.2vw, 32px);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.story-prose .story-note {
   max-width: 36em;
-  color: var(--muted);
-  font-size: 14px;
+  margin-bottom: 0;
+  color: #7c8085;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.01em;
   line-height: 1.45;
 }
 
@@ -811,7 +871,18 @@ body.story-open { overflow: hidden; }
 
   .story-token { font-size: 28px; }
 
-  .story-body { padding-top: 36px; padding-bottom: 48px; }
+  .story-body { padding-top: 24px; padding-bottom: 40px; }
+
+  .story-layout { grid-template-columns: 1fr; }
+
+  .story-title-block,
+  .story-photos,
+  .story-prose {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .story-title-block { padding: 28px 22px 32px; }
 
   .site-nav .social-btn {
     min-height: 42px;

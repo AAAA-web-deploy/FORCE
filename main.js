@@ -15,6 +15,7 @@
   const holdPoster = saveData || slow || reduceMotion;
 
   let config = null;
+  let analyticsOrigin = "";
   let filmVideo = null;
   let lastFocus = null;
   let coinVisible = false;
@@ -79,6 +80,8 @@
     activateResource("explorer", links.explorer);
     activateSocial("telegram", links.telegram);
     activateSocial("x", links.x);
+    const analytics = next.analytics || {};
+    analyticsOrigin = typeof analytics.apiOrigin === "string" ? analytics.apiOrigin.replace(/\/$/, "") : "";
   }
 
   let contractAddress = "";
@@ -91,6 +94,7 @@
     check.hidden = false;
     copyButton.classList.add("is-copied");
     copyButton.setAttribute("aria-label", "Contract address copied");
+    trackClick("copy");
     window.setTimeout(function () {
       squares.hidden = false;
       check.hidden = true;
@@ -170,6 +174,7 @@
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.innerHTML = pending.innerHTML;
+    if (key === 'explorer') link.dataset.track = 'dextools';
     pending.replaceWith(link);
   }
 
@@ -227,6 +232,7 @@
 
   function openFilm() {
     filmOpen = true;
+    trackClick("film");
     pauseCoin();
     lastFocus = document.activeElement;
     if (!filmVideo) {
@@ -298,6 +304,8 @@
 
   function openStory() {
     storyOpen = true;
+    noteSection("story");
+    trackClick("community");
     pauseCoin();
     setMenu(false);
     storyFocus = document.activeElement;
@@ -367,6 +375,129 @@
   function start() {
     const idle = window.requestIdleCallback || function (fn) { setTimeout(fn, 200); };
     idle(armCoin, { timeout: 1200 });
+    startPublicAnalytics();
+  }
+
+  let latestSection = "hero";
+  let pageViewSent = false;
+
+  function trackingRefused() {
+    const nav = navigator;
+    if (nav.globalPrivacyControl) return true;
+    const dnt = nav.doNotTrack;
+    return dnt === "1" || dnt === "yes";
+  }
+
+  function analyticsUrl(path) {
+    return analyticsOrigin + path;
+  }
+
+  function postAnalytics(route, body) {
+    return fetch(analyticsUrl(route), {
+      method: "POST",
+      headers: { "content-type": "application/json", accept: "application/json" },
+      body: JSON.stringify(body),
+      credentials: analyticsOrigin ? "include" : "same-origin",
+      cache: "no-store",
+      keepalive: true
+    }).then(function (response) {
+      return response.ok;
+    }).catch(function () {
+      return false;
+    });
+  }
+
+  function analyticsPayload(type, eventId, click) {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      type: type,
+      eventId: eventId,
+      path: window.location.pathname + window.location.search,
+      section: latestSection,
+      referrer: document.referrer,
+      click: click,
+      utmSource: params.get("utm_source") || undefined,
+      utmMedium: params.get("utm_medium") || undefined,
+      utmCampaign: params.get("utm_campaign") || undefined
+    };
+  }
+
+  function noteSection(section) {
+    if (!section || section === latestSection) return;
+    latestSection = section;
+    if (trackingRefused() || pageViewSent === false) return;
+    postAnalytics("/api/analytics/collect", analyticsPayload("section", crypto.randomUUID()));
+  }
+
+  function trackClick(click) {
+    if (trackingRefused()) return;
+    postAnalytics("/api/analytics/collect", analyticsPayload("click", crypto.randomUUID(), click));
+  }
+
+  function startPublicAnalytics() {
+    if (trackingRefused()) return;
+    if (!pageViewSent) {
+      pageViewSent = true;
+      const pageEventId = crypto.randomUUID();
+      postAnalytics("/api/analytics/collect", analyticsPayload("pageview", pageEventId)).then(function (ok) {
+        if (!ok) postAnalytics("/api/analytics/collect", analyticsPayload("pageview", pageEventId));
+      });
+    }
+
+    let heartbeatId = crypto.randomUUID();
+    let timer = 0;
+    function beat() {
+      if (document.visibilityState !== "visible") return;
+      const id = heartbeatId;
+      postAnalytics("/api/analytics/heartbeat", analyticsPayload("heartbeat", id)).then(function (ok) {
+        if (ok) heartbeatId = crypto.randomUUID();
+      });
+    }
+    function arm() {
+      window.clearInterval(timer);
+      if (document.visibilityState !== "visible") return;
+      timer = window.setInterval(beat, 30000);
+    }
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        beat();
+        arm();
+      } else {
+        window.clearInterval(timer);
+      }
+    });
+    if (document.visibilityState === "visible") arm();
+
+    if ("IntersectionObserver" in window) {
+      const watch = [
+        [".hero", "hero"],
+        ["#token", "token"],
+        ["#film", "film"]
+      ];
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting || entry.intersectionRatio < 0.45) return;
+          const name = entry.target.getAttribute("data-section");
+          noteSection(name);
+        });
+      }, { threshold: [0.45] });
+      watch.forEach(function (pair) {
+        const node = document.querySelector(pair[0]);
+        if (!node) return;
+        node.setAttribute("data-section", pair[1]);
+        observer.observe(node);
+      });
+    }
+
+    document.addEventListener("click", function (event) {
+      const social = event.target.closest("[data-social]");
+      if (social && (social.dataset.social === "telegram" || social.dataset.social === "x")) {
+        trackClick(social.dataset.social);
+        return;
+      }
+      const tracked = event.target.closest("[data-track]");
+      if (tracked && tracked.dataset.track) trackClick(tracked.dataset.track);
+    });
   }
 
   fetch("site.config.json", { cache: "no-cache" })

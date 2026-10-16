@@ -21,12 +21,12 @@
     "filmAction": "Watch film · 0:22"
   },
   "token": {
-    "contractAddress": null,
+    "contractAddress": "0xd4740c3091960c249abf846a064f7295fb17ba13",
     "pendingContractLabel": "Coming soon.."
   },
   "links": {
     "chat": null,
-    "explorer": null,
+    "explorer": "https://www.dextools.io/app/ether/pair-explorer/0x785efd69c51a21e26928aab03dca214a1b2b3c6d",
     "telegram": "https://t.me/muskgravity",
     "x": "https://x.com/muskgravity"
   },
@@ -55,5 +55,8 @@
     }
   },
   "reference": "reference/preview.png",
-  "footer": "Independent community project. No affiliation with Elon Musk or his companies."
+  "footer": "Independent community project. No affiliation with Elon Musk or his companies.",
+  "analytics": {
+    "apiOrigin": ""
+  }
 }

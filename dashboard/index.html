@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Visitor dashboard · Musk Gravity</title>
+  <link rel="icon" href="../assets/brand/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+</head>
+<body>
+  <main class="dash" id="dashboard-main">
+    <p class="status" id="checking" role="status">Checking session…</p>
+    <form class="card" id="login-form" hidden>
+      <h1>Private visitor dashboard</h1>
+      <p id="login-notice" role="status" hidden></p>
+      <label for="dashboard-password">Password</label>
+      <input id="dashboard-password" type="password" autocomplete="current-password" required>
+      <button class="btn" id="login-button" type="submit">Open dashboard</button>
+      <p id="login-error" role="alert" hidden></p>
+    </form>
+    <section id="ready" hidden>
+      <header class="top">
+        <div>
+          <p class="kicker">Musk Gravity</p>
+          <h1>Visitors</h1>
+        </div>
+        <button class="btn btn-quiet" id="logout" type="button">Sign out</button>
+      </header>
+      <p id="notice" role="status"></p>
+      <form class="filters" id="filters">
+        <label>Range
+          <select id="range">
+            <option value="today">Today</option>
+            <option value="24h">24 hours</option>
+            <option value="7d">7 days</option>
+          </select>
+        </label>
+        <label><input id="bots" type="checkbox"> Bots</label>
+        <label><input id="tests" type="checkbox"> Tests</label>
+        <button class="btn" type="submit">Apply</button>
+      </form>
+      <div class="stats" id="stats"></div>
+      <div class="toolbar">
+        <button class="btn btn-quiet" id="export" type="button">Export CSV</button>
+        <label><input id="include-ips" type="checkbox"> Include IP addresses</label>
+        <button class="btn btn-quiet" id="delete" type="button">Delete selected</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>When</th>
+              <th>Place</th>
+              <th>IP</th>
+              <th>Device</th>
+              <th>Path</th>
+              <th>Referrer</th>
+            </tr>
+          </thead>
+          <tbody id="visits"></tbody>
+        </table>
+      </div>
+      <p class="pager">
+        <button class="btn btn-quiet" id="prev" type="button">Previous</button>
+        <span id="page-label"></span>
+        <button class="btn btn-quiet" id="next" type="button">Next</button>
+      </p>
+      <article class="card" id="detail" hidden></article>
+    </section>
+  </main>
+  <script src="/dashboard/dashboard.js"></script>
+</body>
+</html>

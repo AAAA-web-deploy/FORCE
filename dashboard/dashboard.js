@@ -9,8 +9,16 @@
   const visitsBody = document.getElementById("visits");
   const pageLabel = document.getElementById("page-label");
   const detail = document.getElementById("detail");
+  const tokenKey = "force-dashboard-token";
   let csrf = "";
+  let accessToken = "";
   let origin = "";
+  let refreshTimer = 0;
+  try {
+    accessToken = sessionStorage.getItem(tokenKey) || "";
+  } catch (error) {
+    accessToken = "";
+  }
   let page = 1;
   let total = 0;
   const pageSize = 25;
@@ -21,8 +29,26 @@
     return origin + path;
   }
 
+  function rememberToken(token) {
+    accessToken = token || "";
+    try {
+      if (accessToken) sessionStorage.setItem(tokenKey, accessToken);
+      else sessionStorage.removeItem(tokenKey);
+    } catch (error) {
+      accessToken = token || "";
+    }
+  }
+
+  function startRefresh() {
+    if (refreshTimer) return;
+    refreshTimer = window.setInterval(function () {
+      if (document.visibilityState === "visible" && !ready.hidden) load(page);
+    }, 10000);
+  }
+
   function api(path, init) {
     const headers = { accept: "application/json" };
+    if (accessToken) headers.authorization = "Bearer " + accessToken;
     if (init && init.body !== undefined) headers["content-type"] = "application/json";
     if (init && init.csrf) headers["x-csrf-token"] = init.csrf;
     return fetch(url(path), {
@@ -226,20 +252,23 @@
       body: { password: document.getElementById("dashboard-password").value }
     }).then(function (result) {
       button.disabled = false;
-      if (!result.ok || !result.data.csrfToken) {
+      if (!result.ok || !result.data.accessToken) {
         show(loginError, message(result, "Incorrect password. Please try again."));
         return;
       }
-      csrf = result.data.csrfToken;
+      rememberToken(result.data.accessToken);
+      csrf = result.data.csrfToken || csrf;
       document.getElementById("dashboard-password").value = "";
       show(loginError, "");
       showReady();
+      startRefresh();
       load(1);
     });
   });
 
   document.getElementById("logout").addEventListener("click", function () {
     api("/api/dashboard/logout", { method: "POST", csrf: csrf, body: {} }).then(function () {
+      rememberToken("");
       return api("/api/dashboard/session");
     }).then(function (session) {
       if (session.data.csrfToken) csrf = session.data.csrfToken;
@@ -277,8 +306,10 @@
   document.getElementById("export").addEventListener("click", function () {
     const query = filters();
     if (document.getElementById("include-ips").checked) query.set("reveal", "1");
+    const exportHeaders = { "x-csrf-token": csrf, accept: "text/csv" };
+    if (accessToken) exportHeaders.authorization = "Bearer " + accessToken;
     fetch(url("/api/dashboard/analytics/export?" + query.toString()), {
-      headers: { "x-csrf-token": csrf, accept: "text/csv" },
+      headers: exportHeaders,
       credentials: origin ? "include" : "same-origin",
       cache: "no-store"
     }).then(function (response) {
@@ -314,12 +345,11 @@
       csrf = result.data.csrfToken;
       if (result.data.authenticated) {
         showReady();
+        startRefresh();
         load(1);
-        window.setInterval(function () {
-          if (document.visibilityState === "visible" && !ready.hidden) load(page);
-        }, 10000);
         return;
       }
+      rememberToken("");
       showLogin("");
     });
 })();

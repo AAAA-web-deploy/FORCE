@@ -112,7 +112,7 @@ export function applyCors(req: IncomingMessage, res: ServerResponse, allowedOrig
   if (!origin || !allowedOrigins.includes(origin)) return
   res.setHeader('access-control-allow-origin', origin)
   res.setHeader('access-control-allow-credentials', 'true')
-  res.setHeader('access-control-allow-headers', 'accept, content-type, x-csrf-token')
+  res.setHeader('access-control-allow-headers', 'accept, authorization, content-type, x-csrf-token')
   res.setHeader('access-control-allow-methods', 'GET, POST, OPTIONS')
   res.setHeader('access-control-max-age', '600')
   res.setHeader('vary', 'Cookie, Origin')

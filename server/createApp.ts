@@ -27,6 +27,7 @@ import { formatNy, resolveRange } from './time.ts'
 import { isLikelyBot, parseUserAgent } from './ua.ts'
 
 const SESSION_MS = 8 * 60 * 60 * 1000
+const CHALLENGE_MS = 10 * 60 * 1000
 const VISIT_TIMEOUT_MS = 30 * 60 * 1000
 const ACTIVE_MS = 90 * 1000
 const ATTEMPT_WINDOW_MS = 15 * 60 * 1000
@@ -79,6 +80,7 @@ export function createApp(options: AppOptions): App {
   const treatNonProductionAsDevelopment =
     options.treatNonProductionAsDevelopment ?? (nodeEnv !== 'production' && nodeEnv !== 'test')
   const allowedOrigins = options.allowedOrigins ?? []
+  const challenges = new Map<string, number>()
   const bootstrap = options.bootstrapPassword ?? process.env.DASHBOARD_PASSWORD
   if (!db.hasPassword() && bootstrap) db.setPasswordHash(hashPassword(bootstrap), now())
 
@@ -190,8 +192,17 @@ export function createApp(options: AppOptions): App {
     return cookieHeader(VISITOR_COOKIE, token, { maxAge: 400 * 24 * 60 * 60, httpOnly: true, ...cookieFlags(req, 'Lax') })
   }
 
+  function sessionToken(req: IncomingMessage): string {
+    const header = headerValue(req.headers.authorization)
+    if (header.length > 7 && header.slice(0, 7).toLowerCase() === 'bearer ') {
+      const bearer = header.slice(7).trim()
+      if (bearer) return bearer
+    }
+    return readCookies(req.headers.cookie).get(SESSION_COOKIE) ?? ''
+  }
+
   function currentSession(req: IncomingMessage): { hash: string } | null {
-    const token = readCookies(req.headers.cookie).get(SESSION_COOKIE)
+    const token = sessionToken(req)
     if (!token) return null
     const hash = hashToken(secrets.pepper, token)
     const row = db.getSession(hash)
@@ -202,6 +213,22 @@ export function createApp(options: AppOptions): App {
     return { hash }
   }
 
+  function rememberChallenge(token: string) {
+    const at = now()
+    if (challenges.size > 4000) {
+      for (const [key, expires] of challenges) {
+        if (expires <= at) challenges.delete(key)
+      }
+    }
+    challenges.set(hashToken(secrets.pepper, token), at + CHALLENGE_MS)
+  }
+
+  function challengeMatches(token: string): boolean {
+    if (!/^[A-Za-z0-9_-]{20,}$/.test(token)) return false
+    const expires = challenges.get(hashToken(secrets.pepper, token))
+    return Boolean(expires && expires > now())
+  }
+
   function requireSession(req: IncomingMessage, res: ServerResponse): boolean {
     if (currentSession(req)) return true
     sendJson(res, 401, { error: 'Unauthorized' })
@@ -209,26 +236,20 @@ export function createApp(options: AppOptions): App {
   }
 
   function requireCsrf(req: IncomingMessage, res: ServerResponse): boolean {
-    const cookies = readCookies(req.headers.cookie)
-    const expected = cookies.get(CSRF_COOKIE) ?? ''
+    const authorization = headerValue(req.headers.authorization)
+    if (authorization.length > 7 && authorization.slice(0, 7).toLowerCase() === 'bearer ' && currentSession(req)) return true
     const presented = headerValue(req.headers['x-csrf-token'])
-    if (!expected || !safeEqual(expected, presented)) {
-      sendJson(res, 403, { error: 'Request could not be verified.' })
-      return false
-    }
-    return true
+    const expected = readCookies(req.headers.cookie).get(CSRF_COOKIE) ?? ''
+    if ((expected && safeEqual(expected, presented)) || challengeMatches(presented)) return true
+    sendJson(res, 403, { error: 'Request could not be verified.' })
+    return false
   }
 
   function sessionStatus(req: IncomingMessage, res: ServerResponse) {
-    const cookies = readCookies(req.headers.cookie)
-    let csrf = cookies.get(CSRF_COOKIE) ?? ''
-    const issued: string[] = []
-    if (!/^[A-Za-z0-9_-]{20,}$/.test(csrf)) {
-      csrf = newToken()
-      issued.push(csrfCookie(csrf, req))
-    }
+    const csrf = newToken()
+    rememberChallenge(csrf)
     const session = currentSession(req)
-    sendJson(res, 200, { authenticated: Boolean(session), csrfToken: csrf }, issued)
+    sendJson(res, 200, { authenticated: Boolean(session), csrfToken: csrf }, [csrfCookie(csrf, req)])
   }
 
   async function login(req: IncomingMessage, res: ServerResponse) {
@@ -268,16 +289,20 @@ export function createApp(options: AppOptions): App {
     if (previous) db.deleteSession(hashToken(secrets.pepper, previous))
     const token = newToken()
     const csrf = newToken()
+    rememberChallenge(csrf)
     const at = now()
     db.clearFailures(subject)
     db.createSession(hashToken(secrets.pepper, token), at, at + SESSION_MS)
-    sendJson(res, 200, { ok: true, csrfToken: csrf }, [sessionCookie(token, req), csrfCookie(csrf, req)])
+    sendJson(res, 200, { ok: true, csrfToken: csrf, accessToken: token }, [sessionCookie(token, req), csrfCookie(csrf, req)])
   }
 
   function logout(req: IncomingMessage, res: ServerResponse) {
     if (!requireCsrf(req, res)) return
-    const token = readCookies(req.headers.cookie).get(SESSION_COOKIE)
-    if (token) db.deleteSession(hashToken(secrets.pepper, token))
+    const header = headerValue(req.headers.authorization)
+    const bearer = header.length > 7 && header.slice(0, 7).toLowerCase() === 'bearer ' ? header.slice(7).trim() : ''
+    const cookie = readCookies(req.headers.cookie).get(SESSION_COOKIE) ?? ''
+    if (bearer) db.deleteSession(hashToken(secrets.pepper, bearer))
+    if (cookie && cookie !== bearer) db.deleteSession(hashToken(secrets.pepper, cookie))
     const flags = cookieFlags(req, 'Strict')
     sendJson(res, 200, { ok: true }, [clearCookie(SESSION_COOKIE, flags), clearCookie(CSRF_COOKIE, flags)])
   }

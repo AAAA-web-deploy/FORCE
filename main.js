@@ -61,15 +61,14 @@
     const filmTime = document.querySelector(".film-time");
     if (filmTime && film.seconds) filmTime.textContent = clock(film.seconds, true);
 
-    if (typeof next.footer === "string" && next.footer.trim()) {
-      document.getElementById("footer-note").textContent = next.footer;
-    }
-
     const contract = next.token && next.token.contractAddress;
     const contractNode = document.getElementById("contract-value");
     if (typeof contract === "string" && contract.trim()) {
-      renderContract(contractNode, contract.trim());
+      contractAddress = contract.trim();
+      contractNode.className = "value value-contract";
+      contractNode.textContent = contractAddress;
     } else if (next.token && next.token.pendingContractLabel) {
+      contractAddress = "";
       contractNode.className = "value";
       contractNode.textContent = next.token.pendingContractLabel;
     }
@@ -77,31 +76,67 @@
     const links = next.links || {};
     activateResource("chat", links.chat);
     activateResource("explorer", links.explorer);
+    activateSocial("telegram", links.telegram);
+    activateSocial("x", links.x);
   }
 
-  function renderContract(node, address) {
-    node.className = "value value-contract";
-    node.replaceChildren();
-    const text = document.createElement("span");
-    text.className = "address";
-    text.textContent = address;
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "copy";
-    button.setAttribute("aria-label", "Copy contract address");
-    button.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5.2" y="5.2" width="7.2" height="7.2" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M3.6 10.2V3.8h6.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    button.addEventListener("click", function () {
-      const done = function (ok) {
-        button.classList.toggle("is-copied", ok);
-        button.setAttribute("aria-label", ok ? "Contract address copied" : "Copy contract address failed");
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(address).then(function () { done(true); }).catch(function () { done(false); });
-      } else {
-        done(false);
-      }
+  let contractAddress = "";
+  const copyButton = document.getElementById("copy-contract");
+
+  function showCopied() {
+    const squares = copyButton.querySelector(".icon-squares");
+    const check = copyButton.querySelector(".icon-check");
+    squares.hidden = true;
+    check.hidden = false;
+    copyButton.classList.add("is-copied");
+    copyButton.setAttribute("aria-label", "Contract address copied");
+    window.setTimeout(function () {
+      squares.hidden = false;
+      check.hidden = true;
+      copyButton.classList.remove("is-copied");
+      copyButton.setAttribute("aria-label", "Copy contract address");
+    }, 1600);
+  }
+
+  function writeAddress(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(function () {
+        return writeAddressFallback(text);
+      });
+    }
+    return writeAddressFallback(text);
+  }
+
+  function writeAddressFallback(text) {
+    return new Promise(function (resolve, reject) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.top = "0";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.select();
+      const ok = document.execCommand("copy");
+      area.remove();
+      ok ? resolve() : reject(new Error("copy failed"));
     });
-    node.append(text, button);
+  }
+
+  copyButton.addEventListener("click", function () {
+    if (!contractAddress) return;
+    writeAddress(contractAddress).then(showCopied).catch(function () {});
+  });
+
+  function activateSocial(key, value) {
+    const href = safeHttpUrl(value);
+    if (!href) return;
+    document.querySelectorAll('[data-social="' + key + '"]').forEach(function (el) {
+      el.href = href;
+      el.target = "_blank";
+      el.rel = "noopener noreferrer";
+      el.removeAttribute("aria-disabled");
+    });
   }
 
   function activateResource(key, value) {

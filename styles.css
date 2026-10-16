@@ -364,7 +364,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .token-action {
   display: flex;
   justify-content: flex-start;
-  padding: 8px 0 14px;
+  padding: 8px var(--inset) 14px;
 }
 
 .token-grid {

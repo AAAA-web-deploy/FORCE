@@ -25,7 +25,7 @@
     "pendingContractLabel": "Coming soon.."
   },
   "links": {
-    "chat": null,
+    "chart": "https://dexscreener.com/ethereum/0x785efd69c51a21e26928aab03dca214a1b2b3c6d",
     "explorer": "https://www.dextools.io/app/ether/pair-explorer/0x785efd69c51a21e26928aab03dca214a1b2b3c6d",
     "telegram": "https://t.me/muskgravity",
     "x": "https://x.com/muskgravity"

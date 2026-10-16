@@ -419,9 +419,9 @@ export class AnalyticsDb {
         ...(filters.campaign ? [filters.campaign] : []),
         ...(filters.referrer ? [filters.referrer] : []),
       ) as { kind: string; n: number }[]
-    const clicks = { telegram: 0, x: 0, dextools: 0, copy: 0, film: 0, community: 0, total: 0 }
+    const clicks = { telegram: 0, x: 0, dextools: 0, chart: 0, copy: 0, film: 0, community: 0, total: 0 }
     for (const row of clickRows) {
-      if (row.kind === 'telegram' || row.kind === 'x' || row.kind === 'dextools' || row.kind === 'copy' || row.kind === 'film' || row.kind === 'community') {
+      if (row.kind === 'telegram' || row.kind === 'x' || row.kind === 'dextools' || row.kind === 'chart' || row.kind === 'copy' || row.kind === 'film' || row.kind === 'community') {
         clicks[row.kind] = Number(row.n)
         clicks.total += Number(row.n)
       }

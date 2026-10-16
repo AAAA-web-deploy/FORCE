@@ -32,7 +32,7 @@ const ACTIVE_MS = 90 * 1000
 const ATTEMPT_WINDOW_MS = 15 * 60 * 1000
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000
 const SECTIONS = new Set(['hero', 'token', 'film', 'story'])
-const CLICKS = new Set(['telegram', 'x', 'dextools', 'copy', 'film', 'community'])
+const CLICKS = new Set(['telegram', 'x', 'dextools', 'chart', 'copy', 'film', 'community'])
 const EVENT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const ID_PATTERN = /^[A-Za-z0-9_-]{16,80}$/
 

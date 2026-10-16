@@ -84,6 +84,7 @@
       ["Telegram", clicks.telegram || 0],
       ["X", clicks.x || 0],
       ["DexTools", clicks.dextools || 0],
+      ["Chart", clicks.chart || 0],
       ["Copy", clicks.copy || 0],
       ["Film", clicks.film || 0],
       ["Community", clicks.community || 0]

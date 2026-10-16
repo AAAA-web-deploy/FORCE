@@ -76,7 +76,7 @@
     }
 
     const links = next.links || {};
-    activateResource("chat", links.chat);
+    activateResource("chart", links.chart);
     activateResource("explorer", links.explorer);
     activateSocial("telegram", links.telegram);
     activateSocial("x", links.x);
@@ -175,6 +175,7 @@
     link.rel = "noopener noreferrer";
     link.innerHTML = pending.innerHTML;
     if (key === 'explorer') link.dataset.track = 'dextools';
+    if (key === 'chart') link.dataset.track = 'chart';
     pending.replaceWith(link);
   }
 

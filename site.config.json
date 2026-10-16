@@ -27,8 +27,8 @@
   "links": {
     "chat": null,
     "explorer": null,
-    "telegram": null,
-    "x": null
+    "telegram": "https://t.me/muskgravity",
+    "x": "https://x.com/muskgravity"
   },
   "media": {
     "logo": "assets/brand/musk-gravity-logo.webp",

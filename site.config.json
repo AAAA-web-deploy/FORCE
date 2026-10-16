@@ -57,6 +57,6 @@
   "reference": "reference/preview.png",
   "footer": "Independent community project. No affiliation with Elon Musk or his companies.",
   "analytics": {
-    "apiOrigin": ""
+    "apiOrigin": "https://force.103.161.35.238.sslip.io"
   }
 }
